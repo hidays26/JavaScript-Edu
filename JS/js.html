@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <title>Daftar Siswa</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-10 offset-1">
+            
+                <h2>Daftar Siswa</h2>
+                <div id="formAdd" role="aria-hidden" style="display: block">
+                    <h5 style="margin-left: 15%">Input Data Siswa</h5>
+                    <form action="javascript:void(0)" method="post" onsubmit="app.Add()">
+                        <input type="text" name="" id="addName" placeholder="Nama">
+                        <input type="text" name="" id="addJurusan" placeholder="Jurusan">
+                        <input type="submit" value="Add" onclick="this.Add" style="width: 50px">
+                    </form>
+                </div>
+                <div id="formEdit" role="aria-hidden" style="display: none">
+                    <form action="javascript:void(0);" method="POST" id="saveEdit">
+                        <h5 style="margin-left: 15%">Input Data Siswa</h5>
+                        <input type="text" id="editName" />
+                        <input type="text" id="editJurusan" />
+                        <input type="submit" value="Edit" style="width: 50px"/>
+                        <a onclick="CloseInput()" aria-label="Close">x</a>
+                    </form>
+                </div>
+
+                <p id="hitung"></p>
+
+                <table class="table-responsive">
+                    <tr>
+                        <th>Name</th>
+                        <th>Jurusan</th>
+                        <th>Action</th>
+                    </tr>
+                    <tbody id="name"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script>
+        var app = new (function(data){
+            this.getName = document.getElementById("name")
+            this.Name = []; //nampung array
+            this.getJurusan = document.getElementById("jurusan")
+            this.Jurusan = []; //nampung array
+
+            this.Hitung = function (data) {
+                var use=document.getElementById("hitung");
+                var name = "siswa";
+
+                if (data) {
+                    use.innerHTML = data +" "+name;
+                }else{
+                    use.innerHTML = "Tidak ada "+name;
+                }
+            }
+            // ShowData
+            this.ShowData = function(params) {
+                var data1 = "";
+                if (this.Name.length>0) {
+                    for (let index = 0; index < this.Name.length; index++) {
+                        data1 += "<tr>"
+                        data1 += "<td>" + this.Name[index] +  "</td>"
+                        data1 += "<td>" + this.Jurusan[index] +  "</td>"
+                        data1 += '<th> <button class="btn btn-warning" style="width:80px" onclick="app.Edit('+index+')">Edit</th>'
+                        data1 += '<th> <button class="btn btn-danger" style="width:80px" onclick="app.Delete('+index+')">Delete</th>'
+                        data1 += "</tr>"}
+                }
+                this.Hitung(this.Name.length);
+                return (this.getName.innerHTML = data1)
+            };
+
+            // AddData
+            this.Add = function () {
+                var getIdAddName = document.getElementById("addName");
+                var getIdAddJurusan = document.getElementById("addJurusan");
+                var nam = getIdAddName.value;
+                var jur = getIdAddJurusan.value;
+
+                if (getIdAddName) {
+                    this.Name.push(nam.trim());
+                    this.Jurusan.push(jur.trim());
+
+                    getIdAddName.value = "";
+                    getIdAddJurusan.value = "";
+                    this.ShowData();
+                }
+            }
+            // EditData
+            this.Edit = function (item) {
+                
+                document.getElementById("formEdit").style.display = "block";
+                document.getElementById("formAdd").style.display = "none";
+                var edit = document.getElementById("editName")
+                var Jur = document.getElementById("editJurusan")
+                
+                edit.value = this.Name[item]
+                Jur.value = this.Jurusan[item]
+                document.getElementById("formEdit").style.display = "block";
+
+                tus = this;
+                document.getElementById("saveEdit").onsubmit = function () {
+                    var newName = edit.value;
+                    var newJur = Jur.value;
+                    if (newName) {
+                    tus.Name.splice(item, 1, newName.trim());
+                    }
+                    if (newJur) {
+                    tus.Jurusan.splice(item, 1, newJur.trim());
+                    }
+                    tus.ShowData();
+                    CloseInput();
+                    document.getElementById("formAdd").style.display = "block";
+                }
+            };
+            // DeleteData
+            this.Delete = function (item) {
+                this.Name.splice(item, 1);
+                this.Jurusan.splice(item, 1);
+                this.ShowData();
+            }
+        });
+
+      function CloseInput() {
+        document.getElementById("formEdit").style.display = "none";
+        
+        document.getElementById("formAdd").style.display = "block";
+      }
+    </script>
+</body>
+</html>
